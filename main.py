@@ -151,6 +151,9 @@ def cluster(subj):
     select_result = db.session.query(SubjectSheet.study_book, db.func.sum(SubjectSheet.mark).label('total'))\
         .filter_by(subj_name=subj).group_by(SubjectSheet.study_book).all()
 
+    if select_result is None:
+        return
+
     students_names = []
     total_marks = []
     for row in select_result:

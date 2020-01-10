@@ -354,6 +354,12 @@ def edit_student():
             if student is None:
                 flash("No such student")
                 return render_template("students.html", data=select_result, form=form)
+            if Groups.query.filter_by(group_code=form.group_code.data).first() is not None:
+                flash("No specified group code found")
+                return render_template('students.html', data=select_result, form=form)
+            if Students.query.filter_by(study_book=form.study_book.data, group_code=form.group_code.data).first() is not None:
+                flash("There is already student with such a study book in this group")
+                return render_template("students.html", data=select_result, form=form)
             student.first_name = form.first_name.data
             student.last_name = form.last_name.data
             student.study_book = form.study_book.data
@@ -405,6 +411,12 @@ def students():
             return render_template('students.html', data=select_result, form=form)
         else:
             student = Students(form.first_name.data, form.last_name.data, form.study_book.data, form.group_code.data)
+            if Groups.query.filter_by(group_code=form.group_code.data).first() is not None:
+                flash("No specified group code found")
+                return render_template('students.html', data=select_result, form=form)
+            if Students.query.filter_by(study_book=form.study_book.data, group_code=form.group_code.data).first() is not None:
+                flash("There is already student with such a study book in this group")
+                return render_template("students.html", data=select_result, form=form)
             db.session.add(student)
             db.session.commit()
             select_result.append(student)

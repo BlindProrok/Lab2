@@ -38,7 +38,7 @@ class SubjectSheetForm(Form):
     subj_name = StringField("Subject Name: ",
                             [validators.data_required("Please, enter a name of the subject."),
                              validators.length(max=64, message="The input data length should be less than 64")])
-    group_code = StringField("Group code: ", [validators.data_required("Please, enter a group code of the student."),
+    group_code = StringField("Group code: ",[validators.data_required("Please, enter a group code of the student."),
                              validators.length(max=64, message="The input data length should be less than 64")])
     study_book = StringField("Study book: ", [validators.data_required("Please, enter a study book of the student."),
                              validators.length(max=64, message="The input data length should be less than 64")])

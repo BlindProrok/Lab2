@@ -215,6 +215,9 @@ def edit_group():
         else:
             group_code = session['group_edit_pk_data']
             group = Groups.query.filter_by(code=group_code).first()
+            if group is None:
+                flash("No such group")
+                return render_template("groups.html", data=select_result, form=form)
             group.code = form.code.data
             db.session.commit()
             return render_template("groups.html", data=select_result, form=form)
@@ -234,6 +237,9 @@ def groups():
         selected_code = request.form.get('del')
         if selected_code is not None:
             selected_row = Groups.query.filter_by(code=selected_code).first()
+            if selected_row is None:
+                flash("No such group")
+                return render_template("groups.html", data=select_result, form=form)
             db.session.delete(selected_row)
             db.session.commit()
             select_result.remove(selected_row)
@@ -242,6 +248,9 @@ def groups():
         selected_code = request.form.get('edit')
         if selected_code is not None:
             selected_row = Groups.query.filter_by(code=selected_code).first()
+            if selected_row is None:
+                flash("No such group")
+                return render_template("groups.html", data=select_result, form=form)
             session['group_edit_pk_data'] = selected_code
             return render_template("edit_group.html", row=selected_row, form=form)
 
@@ -273,6 +282,9 @@ def edit_subject():
         else:
             subject_name = session['subject_edit_pk_data']
             subject = Subjects.query.filter_by(name=subject_name).first()
+            if subject is None:
+                flash("No such subject")
+                return render_template("subjects.html", data=select_result, form=form)
             subject.name = form.name.data
             db.session.commit()
             return render_template("subjects.html", data=select_result, form=form)
@@ -292,6 +304,9 @@ def subjects():
         selected_name = request.form.get('del')
         if selected_name is not None:
             selected_row = Subjects.query.filter_by(name=selected_name).first()
+            if selected_row is None:
+                flash("No such subject")
+                return render_template("subjects.html", data=select_result, form=form)
             db.session.delete(selected_row)
             db.session.commit()
             select_result.remove(selected_row)
@@ -300,6 +315,9 @@ def subjects():
         selected_name = request.form.get('edit')
         if selected_name is not None:
             selected_row = Subjects.query.filter_by(name=selected_name).first()
+            if selected_row is None:
+                flash("No such subject")
+                return render_template("subjects.html", data=select_result, form=form)
             session['subject_edit_pk_data'] = selected_name
             return render_template("edit_subject.html", row=selected_row, form=form)
 
@@ -332,8 +350,10 @@ def edit_student():
             selected_pk_data_list = session['student_edit_pk_data'].split("█")
             selected_group_code = selected_pk_data_list[0]
             selected_spooky_book = selected_pk_data_list[1]
-            print(selected_group_code, selected_spooky_book)
             student = Students.query.filter_by(study_book=selected_spooky_book, group_code=selected_group_code).first()
+            if student is None:
+                flash("No such student")
+                return render_template("students.html", data=select_result, form=form)
             student.first_name = form.first_name.data
             student.last_name = form.last_name.data
             student.study_book = form.study_book.data
@@ -358,8 +378,10 @@ def students():
             selected_pk_data = selected_pk_data.split("█")
             selected_group_code = selected_pk_data[0]
             selected_spooky_book = selected_pk_data[1]
-            print(selected_spooky_book, selected_group_code)
             selected_row = Students.query.filter_by(study_book=selected_spooky_book, group_code=selected_group_code).first()
+            if selected_row is None:
+                flash("No such student")
+                return render_template("students.html", data=select_result, form=form)
             db.session.delete(selected_row)
             db.session.commit()
             select_result.remove(selected_row)
@@ -371,6 +393,9 @@ def students():
             selected_group_code = selected_pk_data_list[0]
             selected_spooky_book = selected_pk_data_list[1]
             selected_row = Students.query.filter_by(study_book=selected_spooky_book, group_code=selected_group_code).first()
+            if selected_row is None:
+                flash("No such student")
+                return render_template("students.html", data=select_result, form=form)
             session['student_edit_pk_data'] = selected_pk_data
             return render_template("edit_student.html", row=selected_row, form=form)
 
@@ -408,6 +433,9 @@ def edit_subjectsheet():
                                                         study_book=selected_spooky_book,
                                                         group_code=selected_group_code,
                                                         date_of_mark=selected_date_of_mark).first()
+            if subjectsheet is None:
+                flash("No such subject sheet record")
+                return render_template("subjectsheet.html", data=select_result, form=form)
 
             group_code, subject_name, date_of_mark = selected_group_code, selected_subj_name, selected_date_of_mark
             year = date_of_mark.year
@@ -457,6 +485,9 @@ def subjectsheet():
             selected_date_of_mark = datetime.strptime(selected_pk_data[3] + "_23:59:59", "%Y-%m-%d_%H:%M:%S").date()
             selected_row = SubjectSheet.query.filter_by(subj_name=selected_subj_name, group_code=selected_group_code,
                                                     study_book=selected_spooky_book, date_of_mark=selected_date_of_mark).first()
+            if selected_row is None:
+                flash("No such subject sheet record")
+                return render_template("subjectsheet.html", data=select_result, form=form)
             db.session.delete(selected_row)
             db.session.commit()
             select_result.remove(selected_row)
@@ -468,12 +499,14 @@ def subjectsheet():
             selected_subj_name = selected_pk_data_list[0]
             selected_group_code = selected_pk_data_list[1]
             selected_spooky_book = selected_pk_data_list[2]
-            print(selected_pk_data_list[3])
             selected_date_of_mark = datetime.strptime(selected_pk_data_list[3] + "_23:59:59", "%Y-%m-%d_%H:%M:%S").date()
             selected_row = SubjectSheet.query.filter_by(subj_name=selected_subj_name,
                                                         study_book=selected_spooky_book,
                                                         group_code=selected_group_code,
                                                         date_of_mark=selected_date_of_mark).first()
+            if selected_row is None:
+                flash("No such subject sheet record")
+                return render_template("subjectsheet.html", data=select_result, form=form)
             session['subjectsheet_edit_pk_data'] = selected_pk_data
             return render_template("edit_subjectsheet.html", row=selected_row, form=form)
 
@@ -520,6 +553,10 @@ def dashboard():
                          if select_result_row.code[-1] == last_char]
     else:
         select_result = [select_result_row.code for select_result_row in select_result_raw]
+
+    if select_result is None:
+        flash("No groups corresponding the parameter found")
+        return "No data - no plots"
 
     codes_starts_result = list(map(lambda s: s[:2], select_result))
     codes = list(set(codes_starts_result))
